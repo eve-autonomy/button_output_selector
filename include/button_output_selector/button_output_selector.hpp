@@ -36,7 +36,7 @@ public:
   explicit ButtonOutputSelector(const rclcpp::NodeOptions & options);
 
 private:
-  uint8_t operator_mode_ = Operator::DRIVER;
+  uint8_t operator_mode_;
 
   // Publisher
   rclcpp::Publisher<VehicleButton>::SharedPtr pub_button_autonomous_;

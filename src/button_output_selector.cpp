@@ -26,6 +26,8 @@ ButtonOutputSelector::ButtonOutputSelector(
 {
   using std::placeholders::_1;
 
+  operator_mode_ = Operator::DRIVER;
+
   sub_button_ = this->create_subscription<VehicleButton>(
     "input/button", rclcpp::QoS{1}.transient_local(),
     std::bind(&ButtonOutputSelector::onButton, this, _1));
