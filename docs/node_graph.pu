@@ -1,0 +1,18 @@
+@startuml
+
+left to right direction
+
+rectangle "autoware" {
+  usecase "/autoware_iv_external_api_adapter"
+}
+
+usecase "/delivery_reservation_button_manager"
+usecase "/button_ouput_selector" #LightCoral
+usecase "/autoware_state_machine"
+usecase "/shutdown_manager"
+
+(/button_ouput_selector) <- (/autoware_iv_external_api_adapter) : /api/external/get/operator
+(/delivery_reservation_button_manager) --> (/button_ouput_selector) : /delivery_reservation_button_manager\n/output/delivery_reservation_button
+(/button_ouput_selector) --> (/shutdown_manager) : /shutdown_button
+(/button_ouput_selector) --> (/autoware_state_machine) : /delivery_reservation_button
+@enduml
