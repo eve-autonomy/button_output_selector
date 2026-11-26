@@ -38,5 +38,6 @@ rclcpp_components_register_node(button_output_selector
 )
 
 ament_auto_package(INSTALL_TO_SHARE
+  config
   launch
 )

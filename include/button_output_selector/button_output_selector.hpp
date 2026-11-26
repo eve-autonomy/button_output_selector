@@ -22,6 +22,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#include "std_msgs/msg/bool.hpp"
 #include "autoware_state_machine_msgs/msg/vehicle_button.hpp"
 #include "tier4_external_api_msgs/msg/operator.hpp"
 
@@ -38,6 +39,26 @@ public:
 private:
   uint8_t operator_mode_;
 
+  // ---- double button (use_double_button:=true) ----
+  // While the engage button and the reservation button are pressed together to depart,
+  // the reservation button must not trigger the "delivery reservation" function.
+  // So in the AUTONOMOUS mode the reservation button output is held until the engage button
+  // is released, and dropped if the double button engage was accepted meanwhile.
+  bool use_double_button_{false};
+  double decision_grace_sec_;
+  double max_wait_sec_;
+  bool engage_pressed_{false};
+  rclcpp::Time engage_released_time_;
+  bool has_accepted_{false};
+  rclcpp::Time last_accepted_time_;
+  bool has_pending_{false};
+  VehicleButton pending_msg_;
+  rclcpp::Time pending_time_;
+  rclcpp::TimerBase::SharedPtr timer_;
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr sub_engage_pressed_;
+  rclcpp::Subscription<VehicleButton>::SharedPtr sub_double_engage_accepted_;
+  void onTimer();
+
   // Publisher
   rclcpp::Publisher<VehicleButton>::SharedPtr pub_button_autonomous_;
   rclcpp::Publisher<VehicleButton>::SharedPtr pub_button_driver_;
@@ -46,6 +67,7 @@ private:
   rclcpp::Subscription<Operator>::SharedPtr sub_get_operator_;
   rclcpp::Subscription<VehicleButton>::SharedPtr sub_button_;
 
+  void publishButton(const VehicleButton & msg);
   void onButton(const VehicleButton::ConstSharedPtr msg);
   void onOperator(const Operator::ConstSharedPtr msg);
 };
